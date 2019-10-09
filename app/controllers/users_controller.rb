@@ -10,6 +10,8 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    options = {include: [:questions]}
+    render json: serializer.new(@user, options), include: ['questions']
   end
 
   # GET /users/new
@@ -70,5 +72,9 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       params.require(:user).permit(:given_name, :family_name)
+    end
+
+    def serializer
+      UserSerializer
     end
 end
