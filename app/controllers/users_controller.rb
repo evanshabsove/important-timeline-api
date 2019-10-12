@@ -39,6 +39,16 @@ class UsersController < ApplicationController
     end
   end
 
+  def find
+    @user = User.find_by(email: params[:user][:email])
+    if @user
+      render json: @user
+    else
+      @errors = @user.errors.full_messages
+      render json: @errors
+    end
+  end
+
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
@@ -77,4 +87,5 @@ class UsersController < ApplicationController
     def serializer
       UserSerializer
     end
+
 end
