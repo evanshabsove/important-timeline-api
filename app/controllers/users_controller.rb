@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate_request, only: [:show]
 
   # GET /users
   # GET /users.json
@@ -30,11 +31,9 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render :show, status: :created, location: @user }
+        render json: serializer.new(@user, options), include: ['questions']
       else
-        format.html { render :new }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+        render json: @user.errors, status: :unprocessable_entity
       end
     end
   end
@@ -52,13 +51,13 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    binding.pry
+    @current_user.update(user_params)
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to @user, notice: 'User was successfully updated.' }
-        format.json { render :show, status: :ok, location: @user }
+        render json: serializer.new(@user, options), include: ['questions']
       else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+        render json: @user.errors, status: :unprocessable_entity
       end
     end
   end
@@ -81,7 +80,7 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:given_name, :family_name)
+      params.require(:user).permit(:given_name, :family_name, :questions_attributes)
     end
 
     def serializer
