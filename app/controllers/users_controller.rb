@@ -80,7 +80,7 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:given_name, :family_name, questions_attributes: [:question, :answer, :date])
+      params.require(:user).permit(:given_name, :family_name, questions_attributes: [:question, :answer, :date, :id])
     end
 
     def serializer
