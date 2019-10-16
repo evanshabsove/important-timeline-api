@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-  skip_before_action :authenticate_request, only: [:show, :index]
+  skip_before_action :authenticate_request, only: [:show, :index, :create]
 
   # GET /users
   # GET /users.json
@@ -30,14 +30,12 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-
-    respond_to do |format|
-      if @user.save
-        options = {include: [:questions]}
-        render json: serializer.new(@user, options), include: ['questions']
-      else
-        render json: @user.errors, status: :unprocessable_entity
-      end
+    @user.password = params[:password]
+    if @user.save
+      options = {include: [:questions]}
+      render json: serializer.new(@user, options), include: ['questions'], auth_token: JsonWebToken.encode(user_id: @user.id)
+    else
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 
@@ -80,7 +78,7 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:given_name, :family_name, questions_attributes: [:question, :answer, :date, :id])
+      params.require(:user).permit(:given_name, :family_name, :email, :password, questions_attributes: [:question, :answer, :date, :id])
     end
 
     def serializer
