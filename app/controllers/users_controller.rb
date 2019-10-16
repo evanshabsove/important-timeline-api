@@ -54,14 +54,11 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
-    @current_user.update(user_params)
-    respond_to do |format|
-      if @user.update(user_params)
-        options = {include: [:questions]}
-        render json: serializer.new(@user, options), include: ['questions']
-      else
-        render json: @user.errors, status: :unprocessable_entity
-      end
+    if @current_user.update(user_params)
+      options = {include: [:questions]}
+      render json: serializer.new(@user, options), include: ['questions']
+    else
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 
