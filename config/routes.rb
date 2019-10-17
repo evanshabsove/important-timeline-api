@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   resources :matches
   resources :questions
   resources :users
+  resources :matches
   resources :search, only: [:index]
   post 'authenticate', to: 'authentication#authenticate'
   resources :scan, only: [:index]

@@ -1,10 +1,12 @@
 class MatchesController < ApplicationController
   before_action :set_match, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate_request, only: [:show, :index, :create]
 
   # GET /matches
   # GET /matches.json
   def index
-    @matches = Match.all
+    @current_user = User.first
+    @matches = @current_user.matches.includes(:matched_with_user) + @current_user.matched_with_users.includes(:user)
   end
 
   # GET /matches/1
@@ -70,5 +72,9 @@ class MatchesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def match_params
       params.require(:match).permit(:user_id)
+    end
+
+    def serializer
+      UserSerializer
     end
 end
