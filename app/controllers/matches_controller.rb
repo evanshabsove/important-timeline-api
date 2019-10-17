@@ -7,6 +7,7 @@ class MatchesController < ApplicationController
   def index
     @current_user = User.first
     @matches = @current_user.matches.includes(:matched_with_user) + @current_user.matched_with_users.includes(:user)
+    render json: serializer.new(@matches)
   end
 
   # GET /matches/1
@@ -75,6 +76,6 @@ class MatchesController < ApplicationController
     end
 
     def serializer
-      UserSerializer
+      MatchSerializer
     end
 end
