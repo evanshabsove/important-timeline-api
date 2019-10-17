@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191009020000) do
+ActiveRecord::Schema.define(version: 20191017110307) do
+
+  create_table "matches", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "matched_with_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["matched_with_user_id"], name: "index_matches_on_matched_with_user_id"
+    t.index ["user_id"], name: "index_matches_on_user_id"
+  end
 
   create_table "questions", force: :cascade do |t|
     t.string "question"
