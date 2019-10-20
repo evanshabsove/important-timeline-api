@@ -4,10 +4,9 @@ class MatchesController < ApplicationController
   # GET /matches
   # GET /matches.json
   def index
-    @current_user = User.first
     @matches = @current_user.matches.includes(:matched_with_user) + @current_user.matched_with_users.includes(:user)
-    options = {include: [:user]}
-    render json: serializer.new(@matches, options), include: ['user']
+    options = {include: [:user, :matched_with_user]}
+    render json: serializer.new(@matches, options), include: ['user', 'matched_with_user']
   end
 
   # GET /matches/1
