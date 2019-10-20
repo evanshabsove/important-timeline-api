@@ -1,6 +1,5 @@
 class MatchesController < ApplicationController
   before_action :set_match, only: [:show, :edit, :update, :destroy]
-  skip_before_action :authenticate_request, only: [:show, :index, :create]
 
   # GET /matches
   # GET /matches.json
@@ -29,15 +28,12 @@ class MatchesController < ApplicationController
   # POST /matches.json
   def create
     @match = Match.new(match_params)
-
-    respond_to do |format|
-      if @match.save
-        format.html { redirect_to @match, notice: 'Match was successfully created.' }
-        format.json { render :show, status: :created, location: @match }
-      else
-        format.html { render :new }
-        format.json { render json: @match.errors, status: :unprocessable_entity }
-      end
+    @match.user_id = @current_user.id
+    if @match.save
+      options = {include: [:user]}
+      render json: serializer.new(@match, options), include: ['user']
+    else
+      render json: @match.errors, status: :unprocessable_entity
     end
   end
 
@@ -73,7 +69,7 @@ class MatchesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def match_params
-      params.require(:match).permit(:user_id)
+      params.require(:match).permit(:matched_with_user_id)
     end
 
     def serializer
