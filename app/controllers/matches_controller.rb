@@ -54,10 +54,7 @@ class MatchesController < ApplicationController
   # DELETE /matches/1.json
   def destroy
     @match.destroy
-    respond_to do |format|
-      format.html { redirect_to matches_url, notice: 'Match was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    render json: {success: true}
   end
 
   private
